@@ -721,9 +721,11 @@ if (link) {
 
     function openVideoZoom(videoSource, description) {
     document.querySelectorAll(".process-nav").forEach(button => {
-        button.style.display = "none";
+        button.style.display = "block";
     });
 
+     currentProcessIndex = -1; 
+      
     const zoomImage = document.getElementById("process-zoom-image");
     const zoomVideo = document.getElementById("process-zoom-video");
     const zoomAudio = document.getElementById("process-zoom-audio");

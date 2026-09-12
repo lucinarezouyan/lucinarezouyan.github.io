@@ -69,25 +69,6 @@
     </p>
   </section>
 
-<section class="project" onclick="openProjectGallery('music')">
-  <h2>Elevator/Hold Music</h2>
-    <p class="meta">Audio | 2026 | independent | Lucin Arezouyan</p>
-
-    <figure>
-      <audio src="music.wav"
-             controls
-             onclick="event.stopPropagation();">
-      </audio>
-
-      <figcaption>A musical piece inspired by hold/elevator music.</figcaption>
-    </figure>
-
-    <p>
-      A repetitive beat made to emulate the calm feeling of elevator and hold music. Devoid of lyrics, the piece focuses
-      on creating a simple and relaxing beat that listeners can enjoy.
-    </p>
-  </section>
-
   <section class="project" onclick="openProjectGallery('star')">
     <h2>Expanding Star</h2>
 
@@ -110,6 +91,25 @@
         Expanding Star is an interactive light sculpture that uses viewer distance to control changes in illuminated scale and color. An ultrasonic sensor and Arduino Mega 2560 control 50 addressable LEDs arranged into three nested star states.
     </p>
 </section>
+
+  <section class="project" onclick="openProjectGallery('music')">
+  <h2>Elevator/Hold Music</h2>
+    <p class="meta">Audio | 2026 | independent | Lucin Arezouyan</p>
+
+    <figure>
+      <audio src="music.wav"
+             controls
+             onclick="event.stopPropagation();">
+      </audio>
+
+      <figcaption>A musical piece inspired by hold/elevator music.</figcaption>
+    </figure>
+
+    <p>
+      A repetitive beat made to emulate the calm feeling of elevator and hold music. Devoid of lyrics, the piece focuses
+      on creating a simple and relaxing beat that listeners can enjoy.
+    </p>
+  </section>
 
 </main>
 
@@ -317,10 +317,10 @@ showSection("about");
     >
 
 <video
-    id="gallery-hero-video"
-    controls
+    id="gallery-hero-video" 
     playsinline
     preload="metadata"
+    poster="expanding-star-video-poster.jpg"
     style="display: none;"
 ></video>
 
@@ -356,6 +356,14 @@ showSection("about");
     <button class="process-nav process-prev" onclick="changeProcessImage(-1)">‹</button>
     <button class="process-nav process-next" onclick="changeProcessImage(1)">›</button>
     <img id="process-zoom-image" src="" alt="Expanded process image">
+
+  <video
+    id="process-zoom-video"
+    controls
+    playsinline
+    preload="metadata"
+    style="display: none;"
+></video>
   
   <audio
     id="process-zoom-audio"
@@ -504,6 +512,7 @@ Expanding Star is an interactive light sculpture that explores how physical move
 
 At close range, 10 red LEDs form the smallest star. At the middle distance, 30 blue LEDs expand the shape, and at the farthest range, all 50 LEDs illuminate to create the full purple star. Developing the project required physical construction, electronics, programming, and repeated troubleshooting. I also adjusted the code to reduce flickering between states and to keep the most recent valid state visible whenever the sensor briefly loses its target.
 `,
+    videoDescription: `This video demonstrates the finished sculpture as an interactive experience rather than a series of still images. As I change my position in front of the ultrasonic sensor, the sculpture responds automatically without requiring a button, controller, or screen, making physical movement the method of communication between the viewer and the artwork. The demonstration shows the star progressing through its red, blue, and purple states as the measured distance changes. It also shows the stability improvements added during development: the display holds its most recent valid state if the sensor briefly loses its target, while separate transition boundaries prevent rapid flickering between levels. The video captures the part of the project that photographs cannot fully communicate—the timing of the interaction, the viewer's influence over the artwork, and the transformation of a stationary construction into a responsive light sculpture.`,
 
     process: [
       {
@@ -575,6 +584,13 @@ if (project.video && heroVideo) {
 
     heroVideo.src = project.video;
     heroVideo.style.display = "block";
+  
+    heroVideo.onclick = function () {
+    openVideoZoom(
+        project.video,
+        project.videoDescription
+    );
+};
 
 } else if (project.audio) {
 
@@ -659,6 +675,12 @@ const zoomAudio = document.getElementById("process-zoom-audio");
 zoomAudio.pause();
 zoomAudio.style.display = "none";
 
+  const zoomVideo = document.getElementById("process-zoom-video");
+
+zoomVideo.pause();
+zoomVideo.removeAttribute("src");
+zoomVideo.style.display = "none";
+
     document.getElementById("process-zoom-description").textContent =
         description || "";
   const zoomLink = document.getElementById("process-zoom-link");
@@ -696,19 +718,51 @@ if (link) {
         item.link
     );
 }
-    
-    function openAudioZoom() { 
-      document.querySelectorAll(".process-nav").forEach(button => {
-    button.style.display = "none";
-});
+
+    function openVideoZoom(videoSource, description) {
+    document.querySelectorAll(".process-nav").forEach(button => {
+        button.style.display = "none";
+    });
+
     const zoomImage = document.getElementById("process-zoom-image");
+    const zoomVideo = document.getElementById("process-zoom-video");
     const zoomAudio = document.getElementById("process-zoom-audio");
     const zoomDescription = document.getElementById("process-zoom-description");
     const zoomLink = document.getElementById("process-zoom-link");
 
     zoomImage.style.display = "none";
 
+    zoomAudio.pause();
+    zoomAudio.style.display = "none";
+
+    zoomVideo.src = videoSource;
+    zoomVideo.style.display = "block";
+
+    zoomDescription.textContent = description || "";
+    zoomLink.style.display = "none";
+
+    document
+        .getElementById("process-zoom")
+        .classList.add("active");
+}
+    
+    function openAudioZoom() { 
+      document.querySelectorAll(".process-nav").forEach(button => {
+        button.style.display = "none";
+});
+    const zoomImage = document.getElementById("process-zoom-image");
+    const zoomAudio = document.getElementById("process-zoom-audio");
+    const zoomVideo = document.getElementById("process-zoom-video");
+    const zoomDescription = document.getElementById("process-zoom-description");
+    const zoomLink = document.getElementById("process-zoom-link");
+
+    zoomImage.style.display = "none";
+
     zoomAudio.style.display = "block";
+
+      zoomVideo.pause();
+zoomVideo.removeAttribute("src");
+zoomVideo.style.display = "none";
 
     zoomDescription.textContent =
         projectGalleryData.music.mainDescription;
@@ -727,6 +781,13 @@ function closeProcessZoom() {
     zoomAudio.pause();
     zoomAudio.currentTime = 0;
     zoomAudio.style.display = "none";
+
+  const zoomVideo = document.getElementById("process-zoom-video");
+
+zoomVideo.pause();
+zoomVideo.currentTime = 0;
+zoomVideo.removeAttribute("src");
+zoomVideo.style.display = "none";
 
     document
         .getElementById("process-zoom")

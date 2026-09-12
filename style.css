@@ -413,6 +413,15 @@ footer {
     transition:
         transform 0.25s ease,
         box-shadow 0.25s ease;
+} 
+
+.gallery-hero video {
+    width: 100%;
+    height: auto;
+    max-height: 60vh;
+    object-fit: contain;
+
+    box-shadow: 0 14px 35px rgba(0, 0, 0, 0.55);
 }
 
 .gallery-hero img:hover {
@@ -678,6 +687,13 @@ footer {
         max-height: none;
         object-fit: contain;
     }
+
+    .gallery-hero video {
+    width: 100%;
+    height: auto;
+    max-height: none;
+    object-fit: contain;
+}
 
     .process-card {
         position: static;

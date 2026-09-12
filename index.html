@@ -321,9 +321,11 @@ showSection("about");
 <!-- PROCESS IMAGE ZOOM -->
 <div id="process-zoom" class="process-zoom">
 
-    <button class="process-zoom-close" onclick="closeProcessZoom()">×</button>
-
+    <button class="process-zoom-close" onclick="closeProcessZoom()">×</button> 
+    <button class="process-nav process-prev" onclick="changeProcessImage(-1)">‹</button>
+    <button class="process-nav process-next" onclick="changeProcessImage(1)">›</button>
     <img id="process-zoom-image" src="" alt="Expanded process image">
+  
   <audio
     id="process-zoom-audio"
     src="music.wav"
@@ -460,8 +462,11 @@ As I continued this process, the track gradually moved further away from the R&B
 }
 };
 
-
+let currentProcessItems = [];
+let currentProcessIndex = 0;
+    
 function openProjectGallery(projectName) {
+  
     const project = projectGalleryData[projectName];
 
     if (!project) return;
@@ -491,6 +496,8 @@ document.getElementById("gallery-main-description").textContent =
     /* Remove old process cards if switching projects */
     canvas.querySelectorAll(".process-card").forEach(card => card.remove());
 
+  currentProcessItems = project.process;
+  
     project.process.forEach((item, index) => {
 
         const figure = document.createElement("figure");
@@ -503,6 +510,7 @@ document.getElementById("gallery-main-description").textContent =
         image.alt = "Project process image";
 
         image.onclick = function() {
+          currentProcessIndex = index; 
             openProcessZoom(item.image, item.description, item.link);
         };
 
@@ -536,6 +544,9 @@ function closeProjectGallery() {
 
 
 function openProcessZoom(imageSource, description, link) {
+  document.querySelectorAll(".process-nav").forEach(button => {
+    button.style.display = "block";
+});
     document.getElementById("process-zoom-image").src = imageSource;
     document.getElementById("process-zoom-image").style.display = "block";
 
@@ -558,7 +569,33 @@ if (link) {
         .getElementById("process-zoom")
         .classList.add("active");
 }
-    function openAudioZoom() {
+  function changeProcessImage(direction) {
+
+    if (!currentProcessItems.length) return;
+
+    currentProcessIndex += direction;
+
+    if (currentProcessIndex < 0) {
+        currentProcessIndex = currentProcessItems.length - 1;
+    }
+
+    if (currentProcessIndex >= currentProcessItems.length) {
+        currentProcessIndex = 0;
+    }
+
+    const item = currentProcessItems[currentProcessIndex];
+
+    openProcessZoom(
+        item.image,
+        item.description,
+        item.link
+    );
+}
+    
+    function openAudioZoom() { 
+      document.querySelectorAll(".process-nav").forEach(button => {
+    button.style.display = "none";
+});
     const zoomImage = document.getElementById("process-zoom-image");
     const zoomAudio = document.getElementById("process-zoom-audio");
     const zoomDescription = document.getElementById("process-zoom-description");

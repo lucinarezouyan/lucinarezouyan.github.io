@@ -750,8 +750,11 @@ if (link) {
     
     function openAudioZoom() { 
       document.querySelectorAll(".process-nav").forEach(button => {
-        button.style.display = "none";
+        button.style.display = "block";
 });
+
+currentProcessIndex = -1;
+      
     const zoomImage = document.getElementById("process-zoom-image");
     const zoomAudio = document.getElementById("process-zoom-audio");
     const zoomVideo = document.getElementById("process-zoom-video");

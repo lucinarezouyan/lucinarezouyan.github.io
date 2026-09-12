@@ -293,8 +293,16 @@ showSection("about");
         onclick="openProcessZoom(this.src, document.getElementById('gallery-main-description').textContent)"
     >
 
+<video
+    id="gallery-hero-video"
+    controls
+    playsinline
+    preload="metadata"
+    style="display: none;"
+></video>
+
     <p id="gallery-main-description" class="gallery-main-description"></p>
-</div>
+</div> 
 
 <div
     id="gallery-audio-wrap"
@@ -461,8 +469,51 @@ As I continued this process, the track gradually moved further away from the R&B
         image: "music-assets/antonio-carlos-jobim-wave.png",
         description: "I used Wave as a reference because it was the song that leaned most closely toward the elevator and hold music direction my project eventually took. Once I decided to move away from the original R&B idea, I used it as an overall reference for the relaxed, background-focused mood I wanted the final track to have."
     }
-]
-}
+    ]
+  },
+
+  "star": {
+    title: "Expanding Star",
+    video: "expanding-star-demo-16s.mp4",
+
+    mainDescription: `
+Expanding Star is an interactive light sculpture that explores how physical movement can control a visual experience. I built the sculpture using 50 individually addressable LEDs arranged into three nested star states. An HC-SR04 ultrasonic sensor measures the viewer's distance, and an Arduino Mega 2560 translates those measurements into changes in the size and color of the illuminated star.
+
+At close range, 10 red LEDs form the smallest star. At the middle distance, 30 blue LEDs expand the shape, and at the farthest range, all 50 LEDs illuminate to create the full purple star. Developing the project required physical construction, electronics, programming, and repeated troubleshooting. I also adjusted the code to reduce flickering between states and to keep the most recent valid state visible whenever the sensor briefly loses its target.
+`,
+
+    process: [
+      {
+        image: "expanding-star-assets/expanding-star-code-collage.png",
+        description: "This collage documents the Arduino programming that controls the interaction between the ultrasonic sensor and the 50 addressable LEDs. The program continuously measures the viewer's distance and translates that measurement into three visual states by activating groups of 10, 30, or 50 LEDs. I also added separate transition thresholds to reduce flickering when the viewer moves near the boundary between states. If the sensor briefly loses its target, the program holds the most recent valid state instead of turning the display off, making the interaction feel more stable and intentional."
+      },
+
+      {
+        image: "expanding-star-assets/expanding-star-outside.jpg",
+        description: "This image shows the rear of the foam panel after the individual LED nodes were inserted and secured with hot glue. Because all 50 LEDs are connected as one continuous strand, the wiring had to curve between the points of the three nested star shapes while maintaining the correct LED sequence. The rear view reveals the physical complexity hidden behind the simple illuminated design visible from the front."
+      },
+
+      {
+        image: "expanding-star-assets/expanding-star-front-layout.jpg",
+        description: "This image shows the unlit sculpture mounted inside its black presentation-board enclosure. The folding sides support the foam panel while also creating enough space behind it for the LED bodies, wiring, power connections, sensor, and Arduino. I chose a dark enclosure so the physical structure would visually recede when the LEDs were illuminated, keeping the changing star as the main focus."
+      },
+
+      {
+        image: "expanding-star-assets/expanding-star-final.jpg",
+        description: "This close-up shows the completed sculpture in its fully expanded purple state with all 50 LEDs illuminated. The outer points and inner structure combine to create the largest version of the star. This state represents the sculpture's complete visual response when the viewer moves farther from the ultrasonic sensor and demonstrates how the same LED strand can progressively build a larger form."
+      },
+
+      {
+        image: "expanding-star-assets/expanding-star-phases-collage.png",
+        description: "This collage compares the three interactive states produced by the finished sculpture. At close range, 10 red LEDs create the smallest star. At the middle distance, 30 blue LEDs expand the form, and at the farthest range, all 50 LEDs create the complete purple star. Showing the three states side by side makes the relationship between viewer distance, color, and illuminated scale easy to understand."
+      },
+
+      {
+        image: "expanding-star-assets/expanding-star-wiring.jpg",
+        description: "This image documents an early electronics test completed before the components were permanently installed inside the enclosure. The Arduino Mega 2560 is connected to the externally powered LED strand through jumper wires and Wago connectors, allowing the power, ground, and data connections to be tested separately. This stage helped me identify unstable wiring, troubleshoot the LED data connection, and confirm that the Arduino could reliably control the addressable LEDs before final assembly."
+      }
+    ]
+  }
 };
 
 let currentProcessItems = [];
@@ -476,19 +527,41 @@ function openProjectGallery(projectName) {
 
     document.getElementById("gallery-title").textContent = project.title;
 const heroImage = document.getElementById("gallery-hero-image");
+const heroVideo = document.getElementById("gallery-hero-video");
 const heroAudio = document.getElementById("gallery-hero-audio");
 const audioWrap = document.getElementById("gallery-audio-wrap");
 
-if (project.audio) {
-    heroImage.style.display = "none";
+/* Reset all center media first */
+
+heroImage.style.display = "none";
+
+heroAudio.pause();
+heroAudio.currentTime = 0;
+audioWrap.style.display = "none";
+
+if (heroVideo) {
+    heroVideo.pause();
+    heroVideo.removeAttribute("src");
+    heroVideo.style.display = "none";
+}
+
+
+/* Decide which media this project uses */
+
+if (project.video && heroVideo) {
+
+    heroVideo.src = project.video;
+    heroVideo.style.display = "block";
+
+} else if (project.audio) {
+
     audioWrap.style.display = "block";
+
 } else {
-    heroAudio.pause();
-    heroAudio.currentTime = 0;
-    audioWrap.style.display = "none";
 
     heroImage.src = project.hero;
     heroImage.style.display = "block";
+
 }
 
 document.getElementById("gallery-main-description").textContent =

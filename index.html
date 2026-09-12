@@ -313,7 +313,7 @@ showSection("about");
         id="gallery-hero-image"
         src=""
         alt="Final project image"
-        onclick="openProcessZoom(this.src, document.getElementById('gallery-main-description').textContent)"
+        onclick="openCurrentProjectMain()"
     >
 
 <video
@@ -549,14 +549,18 @@ At close range, 10 red LEDs form the smallest star. At the middle distance, 30 b
 };
 
 let currentProcessItems = [];
-let currentProcessIndex = 0;
+let currentProcessIndex = -1;
+let currentProject = null;
     
 function openProjectGallery(projectName) {
   
     const project = projectGalleryData[projectName];
 
     if (!project) return;
-
+  
+currentProject = project;
+currentProcessIndex = -1;
+  
     document.getElementById("gallery-title").textContent = project.title;
 const heroImage = document.getElementById("gallery-hero-image");
 const heroVideo = document.getElementById("gallery-hero-video");
@@ -696,18 +700,52 @@ if (link) {
         .getElementById("process-zoom")
         .classList.add("active");
 }
-  function changeProcessImage(direction) {
 
-    if (!currentProcessItems.length) return;
+function openCurrentProjectMain() {
+    if (!currentProject) return;
 
-    currentProcessIndex += direction;
+    currentProcessIndex = -1;
 
-    if (currentProcessIndex < 0) {
-        currentProcessIndex = currentProcessItems.length - 1;
+    if (currentProject.video) {
+        openVideoZoom(
+            currentProject.video,
+            currentProject.videoDescription
+        );
+    } else if (currentProject.audio) {
+        openAudioZoom();
+    } else {
+        openProcessZoom(
+            currentProject.hero,
+            currentProject.mainDescription
+        );
     }
+}
+    
+  function changeProcessImage(direction) {
+    if (!currentProcessItems.length || !currentProject) return;
 
-    if (currentProcessIndex >= currentProcessItems.length) {
-        currentProcessIndex = 0;
+    if (currentProcessIndex === -1) {
+        if (direction > 0) {
+            currentProcessIndex = 0;
+        } else {
+            currentProcessIndex = currentProcessItems.length - 1;
+        }
+    } else {
+        currentProcessIndex += direction;
+
+        if (currentProcessIndex === -1) {
+            openCurrentProjectMain();
+            return;
+        }
+
+        if (currentProcessIndex >= currentProcessItems.length) {
+            openCurrentProjectMain();
+            return;
+        }
+
+        if (currentProcessIndex < -1) {
+            currentProcessIndex = currentProcessItems.length - 1;
+        }
     }
 
     const item = currentProcessItems[currentProcessIndex];
@@ -718,7 +756,6 @@ if (link) {
         item.link
     );
 }
-
     function openVideoZoom(videoSource, description) {
     document.querySelectorAll(".process-nav").forEach(button => {
         button.style.display = "block";

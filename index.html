@@ -6,7 +6,7 @@
 
   <title>Lucin Arezouyan ~ portfolio</title>
 
-  <link rel="stylesheet" href="style.css?v=15">
+  <link rel="stylesheet" href="style.css?v=16">
 </head>
 
 <body>
@@ -87,6 +87,29 @@
       on creating a simple and relaxing beat that listeners can enjoy.
     </p>
   </section>
+
+  <section class="project" onclick="openProjectGallery('star')">
+    <h2>Expanding Star</h2>
+
+    <p class="meta">
+        Interactive Media | 2026 | independent | Lucin Arezouyan
+    </p>
+
+    <figure>
+        <img
+            src="expanding-star-assets/expanding-star-final.jpg"
+            alt="completed interactive LED star illuminated in its full purple state"
+        >
+
+        <figcaption>
+            An interactive light sculpture that changes scale and color based on viewer distance.
+        </figcaption>
+    </figure>
+
+    <p>
+        Expanding Star is an interactive light sculpture that uses viewer distance to control changes in illuminated scale and color. An ultrasonic sensor and Arduino Mega 2560 control 50 addressable LEDs arranged into three nested star states.
+    </p>
+</section>
 
 </main>
 
@@ -611,13 +634,19 @@ document.getElementById("gallery-main-description").textContent =
 
 
 function closeProjectGallery() {
+    const heroVideo = document.getElementById("gallery-hero-video");
+
+    if (heroVideo) {
+        heroVideo.pause();
+        heroVideo.currentTime = 0;
+    }
+
     document
         .getElementById("project-gallery")
         .classList.remove("active");
 
     document.body.style.overflow = "";
 }
-
 
 function openProcessZoom(imageSource, description, link) {
   document.querySelectorAll(".process-nav").forEach(button => {
